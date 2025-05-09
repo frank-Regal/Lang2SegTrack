@@ -208,6 +208,7 @@ class SAM2VideoPredictor(SAM2Base):
         )
         inference_state = {}
         inference_state["images"] = images
+        inference_state["images_idx"] = list(range(len(images)))
         inference_state["num_frames"] = len(images)
         # whether to offload the video frames to CPU memory
         # turning on this option saves the GPU memory with only a very small overhead
