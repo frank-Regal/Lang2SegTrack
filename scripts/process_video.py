@@ -203,8 +203,13 @@ if __name__ == "__main__":
     parser.add_argument("--mask_dir", help="If provided, save mask images to the given directory")
     parser.add_argument("--device", default="cuda:0")
     args = parser.parse_args()
-    main(args, bbox_list=[[0.9974, 476.9335, 132.7147, 637.7667],
-                          [326.9996, 496.1451, 459.6062, 638.1525]]) # (x1,y1,x2,y2)
+    # Image --- Frame: 96
+    # main(args, bbox_list=[[0.9974, 476.9335, 132.7147, 637.7667],
+    #                       [326.9996, 496.1451, 459.6062, 638.1525]]) # (x1,y1,x2,y2)
+
+    # Image "Outdoor_P_NS_P0010_MoveInReverse_LF_20250318_005038" Frame: 71
+    main(args, bbox_list=[[53.6098, 364.7805, 270.9203, 636.8476],
+                          [298.9949, 333.6954, 479.6104, 612.3931]]) # (x1,y1,x2,y2)
     # main(args, bbox_list=[[0.9974, 476.9335, 131.7173, 160.8332],
     #                       [326.9996, 496.1451, 132.6066, 142.0074]]) # (x,y,w,h)
     # main(args, bbox_list=[[607.75244140625, 126.3901596069336, 791.4397583007812, 356.09332275390625],
