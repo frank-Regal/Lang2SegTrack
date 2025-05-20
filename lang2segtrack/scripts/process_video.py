@@ -109,8 +109,6 @@ def process_video_in_chunks(args, initial_bbox_list: list[list[float]], chunk_se
     del predictor
 
 def process_video(args, bbox_list:list[list[float]]):
-    print("hello!")
-    return
     device = args.device
     model_cfg = determine_model_cfg(args.model_path)
     predictor = build_sam2_video_predictor(model_cfg, args.model_path, device=device,)
