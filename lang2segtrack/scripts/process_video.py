@@ -9,9 +9,9 @@ import torch
 import gc
 import sys
 
-from utils.color import COLOR
-from utils.utils import determine_model_cfg, bbox_process, prepare_frames_or_path, save_frames_to_temp_dir
-from models.sam2.sam2.build_sam import build_sam2_video_predictor
+from ..utils.color import COLOR
+from ..utils.utils import determine_model_cfg, bbox_process, prepare_frames_or_path, save_frames_to_temp_dir
+from ..models.sam2.sam2.build_sam import build_sam2_video_predictor
 from pathlib import Path
 import imageio.v3 as iio
 
@@ -38,7 +38,7 @@ def process_video_in_chunks(args, initial_bbox_list: list[list[float]], chunk_se
     bbox_list = initial_bbox_list
 
     while current_frame_idx < total_frames:
-        # Step 1: 读取 chunk 的帧
+        # Step 1: chunk frames
         frames = []
         cap.set(cv2.CAP_PROP_POS_FRAMES, current_frame_idx)
         for _ in range(min(chunk_size, total_frames - current_frame_idx)):
@@ -50,7 +50,7 @@ def process_video_in_chunks(args, initial_bbox_list: list[list[float]], chunk_se
         if len(frames) == 0:
             break
         frames_folder = save_frames_to_temp_dir(frames)
-        # Step 2: 准备和初始化 predictor
+        # Step 2: prepare and initialize predictor
         with torch.inference_mode(), torch.autocast('cuda', dtype=torch.float16):
             state = predictor.init_state(frames_folder, offload_video_to_cpu=True, offload_state_to_cpu=True)
             prompts = bbox_process(bbox_list)
@@ -93,7 +93,7 @@ def process_video_in_chunks(args, initial_bbox_list: list[list[float]], chunk_se
                     img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
                     writer.append_data(img)
 
-            # Step 3: 更新 bbox_list（取最后一帧的检测框）
+            # Step 3: update bbox_list (take the detection box from the last frame)
             bbox_list = list(bbox_to_vis.values())
 
             del state
@@ -108,7 +108,9 @@ def process_video_in_chunks(args, initial_bbox_list: list[list[float]], chunk_se
         writer.close()
     del predictor
 
-def main(args, bbox_list:list[list[float]]):
+def process_video(args, bbox_list:list[list[float]]):
+    print("hello!")
+    return
     device = args.device
     model_cfg = determine_model_cfg(args.model_path)
     predictor = build_sam2_video_predictor(model_cfg, args.model_path, device=device,)
@@ -208,8 +210,8 @@ if __name__ == "__main__":
     #                       [326.9996, 496.1451, 459.6062, 638.1525]]) # (x1,y1,x2,y2)
 
     # Image "Outdoor_P_NS_P0010_MoveInReverse_LF_20250318_005038" Frame: 71
-    main(args, bbox_list=[[53.6098, 364.7805, 270.9203, 636.8476],
-                          [298.9949, 333.6954, 479.6104, 612.3931]]) # (x1,y1,x2,y2)
+    # main(args, bbox_list=[[53.6098, 364.7805, 270.9203, 636.8476],
+    #                       [298.9949, 333.6954, 479.6104, 612.3931]]) # (x1,y1,x2,y2)
     # main(args, bbox_list=[[0.9974, 476.9335, 131.7173, 160.8332],
     #                       [326.9996, 496.1451, 132.6066, 142.0074]]) # (x,y,w,h)
     # main(args, bbox_list=[[607.75244140625, 126.3901596069336, 791.4397583007812, 356.09332275390625],
